@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observability competitive intelligence — Elastic</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --elastic-blue:#0B64DD;
+  --light-teal:#48EFCF;
+  --midnight:#153385;
+  --developer-blue:#101C3F;
+  --dark-ink:#1C1E23;
+  --ink:#343741;
+  --light-grey:#F5F7FA;
+  --medium-grey:#D3DAE6;
+  --white:#FFFFFF;
+  --font-body:'Inter',Arial,sans-serif;
+  --font-code:'Space Mono',monospace;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  padding:0;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--white);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px 64px;}
+
+/* header */
+.site-header{
+  background:var(--elastic-blue);
+  color:var(--white);
+  padding:40px 0 34px;
+}
+.site-header .wrap{padding-bottom:0;}
+.header-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.site-header h1{
+  font-size:30px;
+  font-weight:700;
+  margin:0 0 8px;
+  letter-spacing:-0.01em;
+}
+.subtitle{
+  margin:0;
+  font-size:14px;
+  font-weight:500;
+  color:rgba(255,255,255,0.86);
+}
+.archive-link{
+  display:inline-block;
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.45);
+  color:var(--white);
+  text-decoration:none;
+  font-size:13px;
+  font-weight:600;
+  padding:8px 16px;
+  border-radius:6px;
+  white-space:nowrap;
+  transition:background .15s ease;
+}
+.archive-link:hover{background:rgba(255,255,255,0.26);}
+
+.solution-nav{
+  display:flex;
+  gap:6px;
+  margin-top:26px;
+  border-bottom:1px solid rgba(255,255,255,0.28);
+}
+.solution-nav a{
+  display:block;
+  padding:10px 18px;
+  font-size:13px;
+  font-weight:600;
+  text-decoration:none;
+  color:rgba(255,255,255,0.78);
+  border-bottom:3px solid transparent;
+  margin-bottom:-1px;
+}
+.solution-nav a:hover{color:var(--white);}
+.solution-nav a.current{
+  color:var(--white);
+  border-bottom-color:var(--light-teal);
+}
+
+.meta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  padding:22px 0 0;
+}
+.meta-chip{
+  font-size:12px;
+  font-weight:600;
+  padding:5px 12px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.14);
+  color:var(--white);
+  border:1px solid rgba(255,255,255,0.45);
+}
+.meta-chip.mono{font-family:var(--font-code);font-size:11px;}
+
+/* filter bar */
+.filter-bar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin-top:24px;
+  padding:14px 16px;
+  background:var(--light-grey);
+  border:1px solid var(--medium-grey);
+  border-radius:8px;
+}
+.filter-label{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--ink);
+  margin-right:4px;
+}
+.filter-pill{
+  font-family:var(--font-body);
+  font-size:13px;
+  font-weight:600;
+  padding:6px 14px;
+  border-radius:20px;
+  border:1px solid var(--medium-grey);
+  background:var(--white);
+  color:var(--ink);
+  cursor:pointer;
+  transition:all .12s ease;
+}
+.filter-pill:hover{border-color:var(--elastic-blue);color:var(--elastic-blue);}
+.filter-pill.on{
+  background:var(--elastic-blue);
+  border-color:var(--elastic-blue);
+  color:var(--white);
+}
+.filter-reset{
+  font-family:var(--font-body);
+  font-size:12px;
+  font-weight:600;
+  padding:6px 12px;
+  border:none;
+  background:transparent;
+  color:var(--elastic-blue);
+  cursor:pointer;
+  text-decoration:underline;
+}
+.filter-count{
+  margin-left:auto;
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink);
+  font-family:var(--font-code);
+}
+
+/* sections */
+section{margin-top:44px;}
+.section-label{
+  font-size:20px;
+  font-weight:700;
+  color:var(--dark-ink);
+  margin:0 0 6px;
+  letter-spacing:-0.01em;
+}
+.section-label::after{
+  content:'';
+  display:block;
+  width:72px;
+  height:3px;
+  background:var(--light-teal);
+  border-radius:2px;
+  margin-top:8px;
+  margin-bottom:18px;
+}
+h3{
+  font-size:17px;
+  font-weight:700;
+  color:var(--dark-ink);
+  margin:0;
+  letter-spacing:-0.01em;
+}
+
+/* quick read / tldr */
+.quick-read{
+  background:var(--light-grey);
+  border-left:4px solid var(--elastic-blue);
+  border-radius:0 8px 8px 0;
+  padding:20px 24px;
+}
+.quick-read-label{
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--elastic-blue);
+  margin-bottom:8px;
+  display:block;
+}
+.quick-read p{margin:0;font-size:15px;}
+.quick-read strong{color:var(--dark-ink);font-weight:700;}
+
+/* summary section */
+.summary-section{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  border-top:2px solid var(--medium-grey);
+}
+.summary-row{
+  display:grid;
+  grid-template-columns:16% 52% 32%;
+  gap:14px;
+  padding:16px 4px;
+  border-bottom:1px solid var(--medium-grey);
+}
+.summary-row .vendor-name{
+  font-weight:700;
+  color:var(--dark-ink);
+  font-size:14px;
+}
+.summary-row .dev-text{font-size:14px;}
+.summary-row.no-update{background:var(--light-grey);}
+.summary-row.no-update .vendor-name{color:var(--ink);}
+.watch-signal{
+  display:block;
+  font-size:13px;
+  color:var(--ink);
+  border-left:3px solid var(--light-teal);
+  padding-left:12px;
+}
+.no-update-text{color:var(--ink);opacity:.72;font-style:italic;}
+
+@media (max-width:760px){
+  .summary-row{grid-template-columns:1fr;}
+}
+
+/* vendor cards */
+.vendors-grid{display:flex;flex-direction:column;gap:20px;}
+.vendor-card{
+  border:1px solid var(--developer-blue);
+  border-radius:10px;
+  background:var(--white);
+  padding:24px 26px;
+}
+.vendor-card.no-update{
+  background:var(--light-grey);
+  border-color:var(--medium-grey);
+}
+.card-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:6px;
+}
+.card-rule{
+  width:60px;
+  height:3px;
+  background:var(--light-teal);
+  border-radius:2px;
+  margin-bottom:14px;
+}
+.status-badge{
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  padding:3px 10px;
+  border-radius:12px;
+  white-space:nowrap;
+}
+.status-badge.active{background:var(--light-teal);color:var(--dark-ink);}
+.status-badge.quiet{background:var(--medium-grey);color:var(--ink);}
+.vendor-card p{font-size:14.5px;margin:0 0 14px;}
+.vendor-card p:last-child{margin-bottom:0;}
+.vendor-card strong{color:var(--dark-ink);font-weight:700;}
+.no-update-msg{font-size:14.5px;margin:0;}
+
+/* further reading */
+.further-reading{display:flex;flex-direction:column;gap:24px;}
+.fr-vendor h3{font-size:15px;margin-bottom:10px;}
+.fr-vendor ul{margin:0;padding-left:20px;list-style:none;}
+.fr-vendor li{margin-bottom:7px;font-size:14px;}
+.fr-link{color:var(--elastic-blue);text-decoration:none;}
+.fr-link:hover{text-decoration:underline;}
+
+/* footer */
+.site-footer{
+  margin-top:56px;
+  border-top:1px solid var(--medium-grey);
+  padding:24px 0 48px;
+  font-size:12.5px;
+  color:var(--ink);
+}
+.site-footer .wrap{padding-bottom:0;}
+.site-footer a{color:var(--elastic-blue);text-decoration:none;}
+.site-footer a:hover{text-decoration:underline;}
+.footer-note{font-weight:600;color:var(--dark-ink);margin:0 0 4px;}
+
+.hidden{display:none !important;}
+
+@media (max-width:760px){
+  .wrap{padding:0 18px 48px;}
+  .site-header h1{font-size:24px;}
+  .filter-count{margin-left:0;width:100%;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="header-top">
+      <div>
+        <h1>Observability competitive intelligence</h1>
+        <p class="subtitle">Datadog · Grafana Labs · ClickHouse · Dynatrace · New Relic · Splunk</p>
+      </div>
+      <a class="archive-link" href="https://frankswain-png.github.io/o11y_compintel/archive/archive.html">📁 Archive</a>
+    </div>
+    <nav class="solution-nav">
+      <a class="current" href="https://frankswain-png.github.io/o11y_compintel/">Observability</a>
+      <a href="https://frankswain-png.github.io/search_compintel/">Search</a>
+      <a href="https://frankswain-png.github.io/security_compintel/">Security</a>
+    </nav>
+    <div class="meta-row">
+      <span class="meta-chip">72-hour pulse</span>
+      <span class="meta-chip">15 Sep – 18 Sep 2026</span>
+      <span class="meta-chip mono">Last updated: 18 Sep 2026, 13:46 UTC</span>
+      <span class="meta-chip">Refreshed every weekday morning</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="filter-bar">
+    <span class="filter-label">Show</span>
+    <button class="filter-pill on" data-vendor="datadog">Datadog</button>
+    <button class="filter-pill on" data-vendor="grafana">Grafana Labs</button>
+    <button class="filter-pill on" data-vendor="clickhouse">ClickHouse</button>
+    <button class="filter-pill on" data-vendor="dynatrace">Dynatrace</button>
+    <button class="filter-pill on" data-vendor="newrelic">New Relic</button>
+    <button class="filter-pill on" data-vendor="splunk">Splunk</button>
+    <button class="filter-reset" id="resetFilters">Reset</button>
+    <span class="filter-count" id="filterCount">6 of 6 vendors</span>
+  </div>
+
+  <section class="quick-read">
+    <span class="quick-read-label">TLDR</span>
+    <p><strong>Splunk</strong> is the consequential story of this window: Cisco used the tail end of <strong>.conf26</strong> in Denver (14–17 September) to publish a single 15 September press release bundling the observability half of the conference — <strong>Cisco AI POD for Splunk</strong> brings self-managed Splunk AI to on-premises and air-gapped customers on NVIDIA-accelerated infrastructure, <strong>Splunk Agent Observability</strong> reached general availability in Observability Cloud and Cisco Cloud Control with a new <strong>Tokenomics</strong> capability for tracking AI token spend, and a new Network Intelligence App brings Cisco network telemetry into Splunk. The theme is AI cost and data-sovereignty objections being answered with shipped product rather than roadmap promises. <strong>ClickHouse</strong> was the other active vendor, using dbt Summit in Las Vegas to move its dbt v2 adapter to public beta and ship an official Apache Airflow provider — both data-orchestration plumbing rather than net-new observability features. <strong>Datadog</strong>, <strong>Grafana Labs</strong>, <strong>Dynatrace</strong> and <strong>New Relic</strong> were quiet in this specific 72-hour window. The catalyst to watch next is whether Dynatrace's $915 million Arize acquisition, still unclosed as of today, closes before the quarter ends on 30 September.</p>
+  </section>
+
+  <section>
+    <div class="section-label">At a glance</div>
+    <div class="summary-section">
+
+      <div class="summary-row no-update" data-vendor="datadog">
+        <div class="vendor-name">Datadog</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+      <div class="summary-row no-update" data-vendor="grafana">
+        <div class="vendor-name">Grafana Labs</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+      <div class="summary-row" data-vendor="clickhouse">
+        <div class="vendor-name">ClickHouse</div>
+        <div class="dev-text">At dbt Summit in Las Vegas (15–18 September), ClickHouse announced a public beta of its dbt v2 adapter and a private beta of a native ClickHouse connection on the dbt platform, the first partner-built v2 adapter available there. On 17 September it also shipped an official Apache Airflow provider, replacing the long-standing community plugin as the supported path for orchestrating ClickHouse pipelines.</div>
+        <div><span class="watch-signal">ClickHouse is building adjacency into the data-orchestration stack around its core database, widening the surface where a ClickHouse-plus-ClickStack pitch can displace a broader Elastic Stack deployment.</span></div>
+      </div>
+
+      <div class="summary-row no-update" data-vendor="dynatrace">
+        <div class="vendor-name">Dynatrace</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+      <div class="summary-row no-update" data-vendor="newrelic">
+        <div class="vendor-name">New Relic</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+      <div class="summary-row" data-vendor="splunk">
+        <div class="vendor-name">Splunk / Cisco</div>
+        <div class="dev-text">Cisco published a 15 September press release bundling .conf26's observability news: Cisco AI POD for Splunk for on-premises and air-gapped AI, Splunk Agent Observability reaching general availability with a new Tokenomics capability, a new Network Intelligence App bringing Cisco network telemetry into Splunk, and new Essentials/Premier editions for Observability Cloud.</div>
+        <div><span class="watch-signal">Splunk now has a shipped, on-premises answer to AI sovereignty and a metered answer to AI cost, narrowing two arguments Elastic has used against Splunk in regulated and cost-sensitive accounts.</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">Vendor details</div>
+    <div class="vendors-grid">
+
+      <div class="vendor-card no-update" data-vendor="datadog">
+        <div class="card-head">
+          <h3>Datadog</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">Nothing was published in the 15–18 September window — no press release, product blog post or notable trade coverage. Datadog Summit São Paulo took place on 15 September, a regional roadshow event; no product announcements were found in coverage of it, and the next stop is Datadog Summit San Francisco on 23 September at the Hyatt Regency. The most recent substantive news remains from just before this window and is not repeated here as new: Chief Product Officer Yanbing Li's 14 September post on Datadog being named "Company to Beat" for observability platforms in Gartner's <em>AI Vendor Race</em> research, and a 13 September trade recap of Olivier Pomel's 8 September Citi Global TMT appearance. Latest reported financials are Q2 FY2026, released 6 August: revenue $1.12 billion, up 36% year over year, non-GAAP operating income $257 million at a 23% margin, and roughly 4,720 customers with $100,000-or-more ARR, up 23%. Datadog was named a Leader in the 2026 Gartner Magic Quadrant for Observability Platforms on 15 July, positioned highest for Ability to Execute for the sixth consecutive year. No Q3 FY2026 earnings date has been announced.</p>
+      </div>
+
+      <div class="vendor-card no-update" data-vendor="grafana">
+        <div class="card-head">
+          <h3>Grafana Labs</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">Nothing was published in the 15–18 September window. The most recent substantive release remains the 14 September digital experience monitoring post pairing Frontend Observability Session Replay with Synthetic Monitoring — dated context from just before this window, not new here. Grafana 13.2.1 shipped 2 September as a patch fixing two CVEs alongside dashboard and panel-editor bugs. Commercial standing per the 26 August disclosure: ARR significantly past $600 million, more than 10,000 customer organisations, and Grafana Cloud monthly active users up from roughly 127,000 to 251,000. Grafana Labs was named a Leader in the 2026 Gartner Magic Quadrant for Observability Platforms on 15 July, positioned furthest in Completeness of Vision for the second consecutive year. The next catalyst is ObservabilityCON 2026 at Pier 27, San Francisco, 19–21 October, themed "AI for observability. Observability for AI."</p>
+      </div>
+
+      <div class="vendor-card" data-vendor="clickhouse">
+        <div class="card-head">
+          <h3>ClickHouse</h3>
+          <span class="status-badge active">Active</span>
+        </div>
+        <div class="card-rule"></div>
+        <p>ClickHouse used dbt Summit in Las Vegas (15–18 September) to publish two connected announcements on 16 September. The ClickHouse adapter for dbt v2 — a ground-up Rust rewrite of dbt — reached public beta, shipping inside the dbt binary and connecting over the ClickHouse ADBC driver rather than as a separate Python package; dbt Labs reports parse times up to 30x faster than dbt v1. Separately, ClickHouse became the first partner-built v2 adapter available on the dbt platform itself, in private beta, letting teams develop ClickHouse models in dbt's Studio IDE, run them on scheduled jobs, and browse them in Catalog. dbt Labs VP of Worldwide Partner Ecosystem Shawn Toldo was quoted framing the pairing around agentic trust: "the companies that win with AI will be the ones whose agents can be trusted with the numbers."</p>
+        <p>On 17 September, ClickHouse also shipped an official Apache Airflow provider, <code>apache-airflow-providers-clickhousedb</code>, now upstream in the Airflow project and built on the in-house <code>clickhouse-connect</code> Python client. It replaces a community plugin that contributor Anton Bryzgalov had maintained for years as the de facto standard, and gives Airflow's standard SQL operator and a new ClickHouse hook direct, bulk-insert-capable access — the same pattern ClickHouse said it runs internally, scheduling roughly 6 billion rows a day across 76 DAGs.</p>
+        <p>Neither announcement is an observability feature on its own, but both extend ClickHouse's reach into the orchestration and transformation tooling that surrounds telemetry pipelines, at the same time ClickHouse continues to sell ClickStack, its OpenTelemetry-native observability stack, directly against Elastic.</p>
+        <p><strong>Watch signal:</strong> ClickHouse is building adjacency into the data-engineering stack — dbt, Airflow, and Postgres via WalShadow — around its core database, which widens the surface area where a ClickHouse-plus-ClickStack pitch can displace a broader Elastic Stack deployment beyond pure log and metric storage.</p>
+        <p>Standing items: the v26.9 community release call took place on 17 September, within this window. ClickHouse's CostBench performance-per-dollar campaign remains paused after the 8 September Snowflake teardown — no BigQuery or Redshift instalment has followed, so the methodology risk to observability comparisons stays live but dormant. Commercial standing is $250 million ARR and more than 4,000 customers as of 27 May, on a $15 billion valuation from the January Series D. RunReveal, a ClickHouse-based security analytics platform, was acquired 1 September for undisclosed terms; no product announcement has followed. On ClickStack, the observability product itself, the most recent update is an August recap published 16 September covering the prior month's feature work — no new ClickStack capability shipped in this window. The London User Conference is 30 September and Open House Bengaluru is 22 September.</p>
+      </div>
+
+      <div class="vendor-card no-update" data-vendor="dynatrace">
+        <div class="card-head">
+          <h3>Dynatrace</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">Nothing was published in the 15–18 September window — no press release, blog post or investor announcement. The $915 million Arize acquisition, signed 13 August, has still not closed; Dynatrace guided to a close later in the quarter ending 30 September or early in fiscal Q3, so a closing announcement remains the item to watch over the next two weeks. Arize's open-source Phoenix platform processes roughly one trillion spans a month across enterprises including DoorDash, Instacart, Reddit, Uber and Booking. The dtwiz CLI, an open-source zero-config setup wizard, shipped 21 July and was introduced to the Dynatrace community on 2 September — both dated before this window. Latest reported results are Q1 FY27 for the quarter ended 30 June, reported 5 August: ARR $2.136 billion, up 17%; total revenue $555 million, up 16%; adjusted free cash flow $309 million at a 56% margin; and logs consumption annualising at $200 million while growing well over 100% year over year. Dynatrace was named a Leader in the 2026 Gartner Magic Quadrant for Observability Platforms for the sixteenth time on 15 July. No Q2 FY27 earnings date has been announced; the next confirmed event is Perform 2027 at The Venetian Las Vegas, 16–18 February 2027.</p>
+      </div>
+
+      <div class="vendor-card no-update" data-vendor="newrelic">
+        <div class="card-head">
+          <h3>New Relic</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">Nothing was published in the 15–18 September window, and no third-party coverage of New Relic surfaced either; the blog's most recent posts remain documentation and culture pieces rather than product or business news. Recent shipping has been steady and regional: New Relic Japan reached general availability 31 August, New Relic Notebooks reached general availability 11 August, and Google Cloud Platform observability enhancements went generally available 4 August. 2026 product direction has centred on Autopilot and Ground Truth, announced 23 June, alongside a commitment to pursue FedRAMP High and DoD Impact Level 4. New Relic has been private since November 2023 under Francisco Partners and TPG and publishes no current ARR or customer count. The Microsoft Azure Marketplace channel remains the one to watch opposite Elastic in Azure-committed accounts, per the 2 June Build disclosure of double-digit year-over-year growth in committed bookings. EMEA workshops on Synthetics (16 September) and Browser Monitoring and Session Replay (17 September) have already taken place this week; o11y Hacks London at Clays Soho follows on 30 September, Money20/20 in Las Vegas runs 18–21 October, and New Relic for AI is scheduled for 4 November.</p>
+      </div>
+
+      <div class="vendor-card" data-vendor="splunk">
+        <div class="card-head">
+          <h3>Splunk / Cisco</h3>
+          <span class="status-badge active">Active</span>
+        </div>
+        <div class="card-rule"></div>
+        <p>Cisco published a press release on 15 September, timed to .conf26 in Denver (14–17 September), that bundled the observability content of the conference into one announcement. Cisco AI POD for Splunk — the newest configuration in Cisco Secure AI Factory with NVIDIA — brings self-managed Splunk AI to on-premises, private-cloud and air-gapped Splunk Enterprise customers for the first time, running on NVIDIA-accelerated, Kubernetes-based infrastructure that Cisco says is pre-validated for Splunk AI workloads. Customers can self-host the Cisco Deep Time Series Model, Google Gemma 4 or OpenAI GPT-OSS 20B today, with NVIDIA Nemotron open models to follow; Splunk AI Assistant runs in agent mode now, with a no-code Agent Launchpad promised later this year. Cisco named channel partners Accenture, bitsIO, Wipro and World Wide Technology as ready to help customers stand up the AI POD on day one.</p>
+        <p>On the observability product side, Splunk Agent Observability — previously an on-premises-only offering — is now generally available in Splunk Observability Cloud and in Cisco Cloud Control, and ships with a new Tokenomics capability that tracks and forecasts AI token spend, including employee use of coding agents such as Claude Code, Codex and Cursor, using the Cisco Deep Time Series Model to project consumption before a billing period ends. A new Observability Studio aims to make new applications "born observable" from development onward, and a new Network Intelligence App — reported in detail by Network World's Zeus Kerravala on 15 September — brings Cisco network topology, device health and event data into Splunk, extended by ThousandEyes-informed synthetic testing, so a network-versus-application dispute can start from correlated evidence rather than dashboard-switching. Two new Observability Cloud editions, Essentials and Premier, simplify how the product is bought and expanded.</p>
+        <p>The through-line across both the AI POD and the Tokenomics/Network Intelligence bundle is that Cisco is answering the two objections — data sovereignty and AI cost unpredictability — that have been the most quotable gaps in SaaS-only observability platforms this year, and it is doing so with shipped product timed to its own conference rather than roadmap promises. Splunk and AWS separately announced an expanded, multi-year strategic partnership around the Agentic SOC in the same window.</p>
+        <p><strong>Watch signal:</strong> Splunk now has an on-premises, air-gapped answer to AI sovereignty and a metered answer to AI cost, which narrows two of the arguments Elastic has used against Splunk in regulated and cost-sensitive accounts; the counter-argument shifts toward what a single-vendor Cisco/NVIDIA appliance stack costs to run and how much genuine model choice it preserves.</p>
+        <p>Standing items: .conf26 ran 14–17 September in Denver, so this bundle covers the conference in full; the 2026 Splunkie Awards, presented during the keynote, went to Verizon, Global Emancipation Network, Trafikverket, UnitedHealth Group and Anthropic. Splunk Enterprise Security 8.7.0 shipped 2 September, before this window. The last formal Splunk press release before .conf26 was 19 May, underscoring how conference-concentrated Splunk's news cycle remains.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">Further reading</div>
+    <div class="further-reading">
+
+      <div class="fr-vendor" data-vendor="clickhouse">
+        <h3>ClickHouse</h3>
+        <ul>
+          <li><a class="fr-link" href="https://clickhouse.com/blog/clickhouse-is-now-available-on-the-dbt-platform">ClickHouse is now available on the dbt platform — ClickHouse blog</a></li>
+          <li><a class="fr-link" href="https://clickhouse.com/blog/clickhouse-airflow-provider">The official ClickHouse provider for Apache Airflow is now available — ClickHouse blog</a></li>
+          <li><a class="fr-link" href="https://clickhouse.com/blog/202609-newsletter">September 2026 newsletter — ClickHouse blog</a></li>
+        </ul>
+      </div>
+
+      <div class="fr-vendor" data-vendor="splunk">
+        <h3>Splunk / Cisco</h3>
+        <ul>
+          <li><a class="fr-link" href="https://newsroom.cisco.com/c/r/newsroom/en/us/a/y2026/m09/cisco-delivers-trusted-ai-at-scale-through-new-splunk-advancements.html">Cisco Delivers Trusted AI at Scale Through New Splunk Advancements — Cisco Newsroom</a></li>
+          <li><a class="fr-link" href="https://www.networkworld.com/article/4222273/highlights-from-splunk-conf26-and-what-the-news-means-to-network-engineers.html">Highlights from Splunk .conf26 and what the news means to network engineers — Network World</a></li>
+          <li><a class="fr-link" href="https://www.splunk.com/en_us/blog/partners/bringing-the-power-of-ai-to-where-your-data-lives-a-new-milestone-with-cisco-and-nvidia.html">Bringing the power of AI to where your data lives: a new milestone with Cisco and NVIDIA — Splunk blog</a></li>
+          <li><a class="fr-link" href="https://www.splunk.com/en_us/blog/partners/splunk-and-aws-building-the-agentic-enterprise-together.html">Splunk and AWS: building the agentic enterprise together — Splunk blog</a></li>
+          <li><a class="fr-link" href="https://www.splunk.com/en_us/blog/security/evolving-to-autonomous-defense-new-agentic-soc-capabilities.html">Evolving to autonomous defense: new agentic SOC capabilities — Splunk blog</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="footer-note">Elastic — Internal competitive intelligence · Not for external distribution</p>
+    <p>Regenerated every weekday morning · <a href="mailto:frank.swain@elastic.co">frank.swain@elastic.co</a> · <a href="https://frankswain-png.github.io/o11y_compintel/archive/archive.html">View archive</a></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'compintel-hidden-vendors';
+  var pills = Array.prototype.slice.call(document.querySelectorAll('.filter-pill'));
+  var resetBtn = document.getElementById('resetFilters');
+  var counter = document.getElementById('filterCount');
+  var total = pills.length;
+
+  function loadHidden(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch(e) { return []; }
+  }
+  function saveHidden(arr){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+
+  var hidden = loadHidden();
+
+  function isHidden(v){ return hidden.indexOf(v) !== -1; }
+
+  function render(){
+    pills.forEach(function(p){
+      var v = p.getAttribute('data-vendor');
+      if (isHidden(v)) { p.classList.remove('on'); } else { p.classList.add('on'); }
+    });
+    var nodes = document.querySelectorAll('.summary-row, .vendor-card, .fr-vendor');
+    Array.prototype.forEach.call(nodes, function(node){
+      var v = node.getAttribute('data-vendor');
+      if (isHidden(v)) { node.classList.add('hidden'); } else { node.classList.remove('hidden'); }
+    });
+    var shown = total - hidden.length;
+    counter.textContent = shown + ' of ' + total + ' vendors';
+  }
+
+  pills.forEach(function(p){
+    p.addEventListener('click', function(){
+      var v = p.getAttribute('data-vendor');
+      var idx = hidden.indexOf(v);
+      if (idx === -1) { hidden.push(v); } else { hidden.splice(idx, 1); }
+      saveHidden(hidden);
+      render();
+    });
+  });
+
+  resetBtn.addEventListener('click', function(){
+    hidden = [];
+    saveHidden(hidden);
+    render();
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
