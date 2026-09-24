@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observability competitive intelligence — Elastic</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --elastic-blue:#0B64DD;
+  --light-teal:#48EFCF;
+  --midnight:#153385;
+  --developer-blue:#101C3F;
+  --dark-ink:#1C1E23;
+  --ink:#343741;
+  --light-grey:#F5F7FA;
+  --medium-grey:#D3DAE6;
+  --white:#FFFFFF;
+  --font-body:'Inter',Arial,sans-serif;
+  --font-code:'Space Mono',monospace;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  padding:0;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:var(--white);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px 64px;}
+
+/* header */
+.site-header{
+  background:var(--elastic-blue);
+  color:var(--white);
+  padding:40px 0 34px;
+}
+.site-header .wrap{padding-bottom:0;}
+.header-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.site-header h1{
+  font-size:30px;
+  font-weight:700;
+  margin:0 0 8px;
+  letter-spacing:-0.01em;
+}
+.subtitle{
+  margin:0;
+  font-size:14px;
+  font-weight:500;
+  color:rgba(255,255,255,0.86);
+}
+.archive-link{
+  display:inline-block;
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.45);
+  color:var(--white);
+  text-decoration:none;
+  font-size:13px;
+  font-weight:600;
+  padding:8px 16px;
+  border-radius:6px;
+  white-space:nowrap;
+  transition:background .15s ease;
+}
+.archive-link:hover{background:rgba(255,255,255,0.26);}
+
+.solution-nav{
+  display:flex;
+  gap:6px;
+  margin-top:26px;
+  border-bottom:1px solid rgba(255,255,255,0.28);
+}
+.solution-nav a{
+  display:block;
+  padding:10px 18px;
+  font-size:13px;
+  font-weight:600;
+  text-decoration:none;
+  color:rgba(255,255,255,0.78);
+  border-bottom:3px solid transparent;
+  margin-bottom:-1px;
+}
+.solution-nav a:hover{color:var(--white);}
+.solution-nav a.current{
+  color:var(--white);
+  border-bottom-color:var(--light-teal);
+}
+
+.meta-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  padding:22px 0 0;
+}
+.meta-chip{
+  font-size:12px;
+  font-weight:600;
+  padding:5px 12px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.14);
+  color:var(--white);
+  border:1px solid rgba(255,255,255,0.45);
+}
+.meta-chip.mono{font-family:var(--font-code);font-size:11px;}
+
+/* filter bar */
+.filter-bar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin-top:24px;
+  padding:14px 16px;
+  background:var(--light-grey);
+  border:1px solid var(--medium-grey);
+  border-radius:8px;
+}
+.filter-label{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--ink);
+  margin-right:4px;
+}
+.filter-pill{
+  font-family:var(--font-body);
+  font-size:13px;
+  font-weight:600;
+  padding:6px 14px;
+  border-radius:20px;
+  border:1px solid var(--medium-grey);
+  background:var(--white);
+  color:var(--ink);
+  cursor:pointer;
+  transition:all .12s ease;
+}
+.filter-pill:hover{border-color:var(--elastic-blue);color:var(--elastic-blue);}
+.filter-pill.on{
+  background:var(--elastic-blue);
+  border-color:var(--elastic-blue);
+  color:var(--white);
+}
+.filter-reset{
+  font-family:var(--font-body);
+  font-size:12px;
+  font-weight:600;
+  padding:6px 12px;
+  border:none;
+  background:transparent;
+  color:var(--elastic-blue);
+  cursor:pointer;
+  text-decoration:underline;
+}
+.filter-count{
+  margin-left:auto;
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink);
+  font-family:var(--font-code);
+}
+
+/* sections */
+section{margin-top:44px;}
+.section-label{
+  font-size:20px;
+  font-weight:700;
+  color:var(--dark-ink);
+  margin:0 0 6px;
+  letter-spacing:-0.01em;
+}
+.section-label::after{
+  content:'';
+  display:block;
+  width:72px;
+  height:3px;
+  background:var(--light-teal);
+  border-radius:2px;
+  margin-top:8px;
+  margin-bottom:18px;
+}
+h3{
+  font-size:17px;
+  font-weight:700;
+  color:var(--dark-ink);
+  margin:0;
+  letter-spacing:-0.01em;
+}
+
+/* quick read / tldr */
+.quick-read{
+  background:var(--light-grey);
+  border-left:4px solid var(--elastic-blue);
+  border-radius:0 8px 8px 0;
+  padding:20px 24px;
+}
+.quick-read-label{
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--elastic-blue);
+  margin-bottom:8px;
+  display:block;
+}
+.quick-read p{margin:0;font-size:15px;}
+.quick-read strong{color:var(--dark-ink);font-weight:700;}
+
+/* summary section */
+.summary-section{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  border-top:2px solid var(--medium-grey);
+}
+.summary-row{
+  display:grid;
+  grid-template-columns:16% 52% 32%;
+  gap:14px;
+  padding:16px 4px;
+  border-bottom:1px solid var(--medium-grey);
+}
+.summary-row .vendor-name{
+  font-weight:700;
+  color:var(--dark-ink);
+  font-size:14px;
+}
+.summary-row .dev-text{font-size:14px;}
+.summary-row.no-update{background:var(--light-grey);}
+.summary-row.no-update .vendor-name{color:var(--ink);}
+.watch-signal{
+  display:block;
+  font-size:13px;
+  color:var(--ink);
+  border-left:3px solid var(--light-teal);
+  padding-left:12px;
+}
+.no-update-text{color:var(--ink);opacity:.72;font-style:italic;}
+
+@media (max-width:760px){
+  .summary-row{grid-template-columns:1fr;}
+}
+
+/* vendor cards */
+.vendors-grid{display:flex;flex-direction:column;gap:20px;}
+.vendor-card{
+  border:1px solid var(--developer-blue);
+  border-radius:10px;
+  background:var(--white);
+  padding:24px 26px;
+}
+.vendor-card.no-update{
+  background:var(--light-grey);
+  border-color:var(--medium-grey);
+}
+.card-head{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:6px;
+}
+.card-rule{
+  width:60px;
+  height:3px;
+  background:var(--light-teal);
+  border-radius:2px;
+  margin-bottom:14px;
+}
+.status-badge{
+  font-size:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  padding:3px 10px;
+  border-radius:12px;
+  white-space:nowrap;
+}
+.status-badge.active{background:var(--light-teal);color:var(--dark-ink);}
+.status-badge.quiet{background:var(--medium-grey);color:var(--ink);}
+.vendor-card p{font-size:14.5px;margin:0 0 14px;}
+.vendor-card p:last-child{margin-bottom:0;}
+.vendor-card strong{color:var(--dark-ink);font-weight:700;}
+.no-update-msg{font-size:14.5px;margin:0;}
+
+/* further reading */
+.further-reading{display:flex;flex-direction:column;gap:24px;}
+.fr-vendor h3{font-size:15px;margin-bottom:10px;}
+.fr-vendor ul{margin:0;padding-left:20px;list-style:none;}
+.fr-vendor li{margin-bottom:7px;font-size:14px;}
+.fr-link{color:var(--elastic-blue);text-decoration:none;}
+.fr-link:hover{text-decoration:underline;}
+
+/* footer */
+.site-footer{
+  margin-top:56px;
+  border-top:1px solid var(--medium-grey);
+  padding:24px 0 48px;
+  font-size:12.5px;
+  color:var(--ink);
+}
+.site-footer .wrap{padding-bottom:0;}
+.site-footer a{color:var(--elastic-blue);text-decoration:none;}
+.site-footer a:hover{text-decoration:underline;}
+.footer-note{font-weight:600;color:var(--dark-ink);margin:0 0 4px;}
+
+.hidden{display:none !important;}
+
+@media (max-width:760px){
+  .wrap{padding:0 18px 48px;}
+  .site-header h1{font-size:24px;}
+  .filter-count{margin-left:0;width:100%;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="header-top">
+      <div>
+        <h1>Observability competitive intelligence</h1>
+        <p class="subtitle">Datadog · Grafana Labs · ClickHouse · Dynatrace · New Relic · Splunk</p>
+      </div>
+      <a class="archive-link" href="https://frankswain-png.github.io/o11y_compintel/archive/archive.html">📁 Archive</a>
+    </div>
+    <nav class="solution-nav">
+      <a class="current" href="https://frankswain-png.github.io/o11y_compintel/">Observability</a>
+      <a href="https://frankswain-png.github.io/search_compintel/">Search</a>
+      <a href="https://frankswain-png.github.io/security_compintel/">Security</a>
+    </nav>
+    <div class="meta-row">
+      <span class="meta-chip">72-hour pulse</span>
+      <span class="meta-chip">21 Sep – 24 Sep 2026</span>
+      <span class="meta-chip mono">Last updated: 24 Sep 2026, 07:43 UTC</span>
+      <span class="meta-chip">Refreshed every weekday morning</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="filter-bar">
+    <span class="filter-label">Show</span>
+    <button class="filter-pill on" data-vendor="datadog">Datadog</button>
+    <button class="filter-pill on" data-vendor="grafana">Grafana Labs</button>
+    <button class="filter-pill on" data-vendor="clickhouse">ClickHouse</button>
+    <button class="filter-pill on" data-vendor="dynatrace">Dynatrace</button>
+    <button class="filter-pill on" data-vendor="newrelic">New Relic</button>
+    <button class="filter-pill on" data-vendor="splunk">Splunk</button>
+    <button class="filter-reset" id="resetFilters">Reset</button>
+    <span class="filter-count" id="filterCount">6 of 6 vendors</span>
+  </div>
+
+  <section class="quick-read">
+    <span class="quick-read-label">TLDR</span>
+    <p>The only dated event in this window was <strong>Datadog Summit San Francisco</strong>, held 23 September at the Hyatt Regency, which promised a first look at new Bits AI releases, expanded agentic capabilities, security features and AI-app data reliability improvements — but no dedicated recap post or press release had appeared as of this report, so specific new capability names are not yet independently confirmed. Everywhere else, the window was genuinely quiet: <strong>ClickHouse</strong>'s Mike Scarpelli board appointment and <strong>New Relic</strong>'s 2026 Observability Forecast, both dated 22 September, remain the most recent substantive news from either company, but both were already covered in the prior edition and nothing new followed on 23 or 24 September. <strong>Grafana Labs</strong> and <strong>Splunk</strong> published nothing at all in the window, and <strong>Dynatrace</strong>'s only in-window activity was two sell-side upgrades — from Needham and Morgan Stanley on 21 September — that pushed its stock to a 52-week high, which is analyst commentary rather than company news. The catalysts immediately ahead are ClickHouse's On-Demand Compute webinar, running today, and the still-unclosed $915 million Dynatrace–Arize acquisition, guided to close by early October.</p>
+  </section>
+
+  <section>
+    <div class="section-label">At a glance</div>
+    <div class="summary-section">
+
+      <div class="summary-row" data-vendor="datadog">
+        <div class="vendor-name">Datadog</div>
+        <div class="dev-text">Datadog Summit San Francisco ran 23 September at the Hyatt Regency, a free one-day event promising a first look at new Bits AI releases, expanded agentic capabilities, new security features and AI-app data reliability improvements, with sessions from engineers at Anthropic, Riot Games, Figma and Cognition. As of this report no dedicated recap blog post or press release had been published, so specific new capability names remain unconfirmed.</div>
+        <div><span class="watch-signal">Once a recap lands, expect concrete capability names bundling AI reliability and security into Datadog's core pitch — the comparison point for Elastic's own AI/security integration story.</span></div>
+      </div>
+
+      <div class="summary-row no-update" data-vendor="grafana">
+        <div class="vendor-name">Grafana Labs</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+      <div class="summary-row no-update" data-vendor="clickhouse">
+        <div class="vendor-name">ClickHouse</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+      <div class="summary-row no-update" data-vendor="dynatrace">
+        <div class="vendor-name">Dynatrace</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+      <div class="summary-row no-update" data-vendor="newrelic">
+        <div class="vendor-name">New Relic</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+      <div class="summary-row no-update" data-vendor="splunk">
+        <div class="vendor-name">Splunk / Cisco</div>
+        <div class="dev-text"><span class="no-update-text">No significant updates in the past 72 hours.</span></div>
+        <div><span class="no-update-text">—</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">Vendor details</div>
+    <div class="vendors-grid">
+
+      <div class="vendor-card" data-vendor="datadog">
+        <div class="card-head">
+          <h3>Datadog</h3>
+          <span class="status-badge active">Active</span>
+        </div>
+        <div class="card-rule"></div>
+        <p>Datadog Summit San Francisco was held on 23 September, 9:00am to 5:30pm at the Hyatt Regency San Francisco — a free, one-day event billed as giving attendees a first look at what's new across the Datadog platform, including Bits AI releases, expanded agentic capabilities, new security features and improved data reliability for AI apps. Sessions featured engineers from Anthropic, Riot Games, Figma and Cognition discussing how they scale observability end-to-end and what it takes to run AI in production.</p>
+        <p>As of this report, no dedicated recap blog post or press release had been published on datadoghq.com covering what was actually shown on stage, so the specific product names and general-availability statuses behind "Bits AI releases" and "new security features" are not yet independently confirmed. This is consistent with Datadog's pattern of announcing at the DASH flagship event in June and using regional Summits primarily for enablement and community engagement rather than net-new product launches — the São Paulo Summit on 15 September similarly produced no distinct product news beyond DASH follow-through.</p>
+        <p><strong>Watch signal:</strong> the event's framing — bundling agentic capabilities, security and AI-app reliability into one narrative — signals where Datadog wants the conversation to sit heading into its next earnings cycle. Once concrete capability names surface, they are likely to sharpen the comparison with Elastic's own AI and security integration story; until then, treat the Summit as a marketing signal rather than a product one.</p>
+        <p>Standing items: the most recent substantive Datadog news remains from before this window — Chief Product Officer Yanbing Li's 14 September post on Datadog being named "Company to Beat" for observability platforms in Gartner's <em>AI Vendor Race</em> research, and a 13 September trade recap of Olivier Pomel's 8 September Citi appearance disclosing that Bits AI pricing is moving to credits partly decoupled from ingest. Latest reported financials are Q2 FY2026 (6 August): revenue $1.12 billion, up 36% year over year, and roughly 4,720 customers with $100,000-or-more ARR, up 23%. Datadog was named a Leader in the 2026 Gartner Magic Quadrant for Observability Platforms on 15 July. No Q3 FY2026 earnings date has been announced. Remaining 2026 Summits are Paris (15 October), Seoul (27 October), Chicago (3 November), Munich (12 November) and Tokyo (16 December).</p>
+      </div>
+
+      <div class="vendor-card no-update" data-vendor="grafana">
+        <div class="card-head">
+          <h3>Grafana Labs</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">Nothing was published in the 21–24 September window — no blog post, press release, funding item or partnership. The most recent product activity remains the 14 September blog post on digital experience monitoring, pairing Frontend Observability Session Replay with Synthetic Monitoring, and the Grafana 13.2.2 patch release of 15 September fixing CVE-2026-12704 and CVE-2026-14199 — both now outside this window. Commercial standing per the 26 August disclosure: ARR significantly past $600 million, more than 10,000 customer organisations, and Grafana Cloud monthly active users up from roughly 127,000 to 251,000. Grafana Labs was named a Leader in the 2026 Gartner Magic Quadrant for Observability Platforms on 15 July, positioned furthest in Completeness of Vision for the second consecutive year. The next catalyst is ObservabilityCON 2026 at Pier 27, San Francisco, 19–21 October, themed "AI for observability. Observability for AI.", with an offsite workshops day on 19 October; expect Grafana's next substantive announcements to cluster around that event rather than before it.</p>
+      </div>
+
+      <div class="vendor-card no-update" data-vendor="clickhouse">
+        <div class="card-head">
+          <h3>ClickHouse</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">Nothing genuinely new landed in the 21–24 September window. ClickHouse's most recent substantive news remains the 22 September appointment of Mike Scarpelli — the former CFO who took Snowflake, ServiceNow and Data Domain through IPOs — to its Board of Directors, disclosed alongside annualised run-rate revenue surpassing $350 million, up from roughly $200 million at the end of 2025, and more than 4,000 customers including DoorDash, Ramp, Meta, Tesla, Cisco and Visa; a same-day post also covered hiring platform Fountain rebuilding its data plane on ClickHouse Cloud. Both items were already reported in the prior edition and nothing new followed on 23 or 24 September beyond a routine bugfix release, v26.9.2.8, on 22 September. The near-term catalyst is today: ClickHouse is hosting a live webinar on On-Demand Compute (private preview since 10 September) at 9–10am PT, after which private-preview rollout begins. Standing items: the $15 billion valuation dates to the $400 million Series D of 16 January; the London User Conference is scheduled for 30 September, and the Open House Roadshow continues in Munich on 6 October. No S-1 has been filed, though co-founder Yury Izrailevsky has said an IPO is targeted within the next few years.</p>
+      </div>
+
+      <div class="vendor-card no-update" data-vendor="dynatrace">
+        <div class="card-head">
+          <h3>Dynatrace</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">No Dynatrace product or corporate announcement landed in the 21–24 September window. The only in-window activity was market-driven: Needham upgraded the stock from Hold to Buy with a $68 price target, and Morgan Stanley upgraded it from Equalweight to Overweight with a $65 target, both on 21 September, pushing shares to a 52-week high near $59 — analyst commentary rather than company news. The $915 million agreement to acquire AI observability platform Arize, signed 13 August, remains unclosed; guidance has pointed to a close in late September or early October, and no closing announcement has been made as of today, so it remains the item to watch over the next one to two weeks. Dynatrace is a sponsor at WeAreDevelopers NA in San Jose, running 23–25 September, though no product news has yet emerged from it. Latest reported results are Q1 FY27 for the quarter ended 30 June, reported 5 August: ARR $2.136 billion, up 17%; total revenue $555 million, up 16%; and logs consumption annualising at $200 million while growing well over 100% year over year. Dynatrace was named a Leader in the 2026 Gartner Magic Quadrant for Observability Platforms for the sixteenth time on 15 July. CFO Jim Benson is set to retire by 31 March 2027. No Q2 FY27 earnings date has been announced; the next confirmed event is Perform 2027 at The Venetian Las Vegas, 16–18 February 2027.</p>
+      </div>
+
+      <div class="vendor-card no-update" data-vendor="newrelic">
+        <div class="card-head">
+          <h3>New Relic</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">Nothing new landed in the 21–24 September window. New Relic's most recent substantive news remains 22 September: the 2026 Observability Forecast (2,575 respondents, with Enterprise Technology Research), finding that a quarter of organisations running agentic AI in production have no monitoring on it at all and that the two-year tool-consolidation trend is reversing, published alongside Compound Alerts, which correlates up to five alert conditions into one issue, and a companion post on building token-efficient SRE agents. All three were already reported in the prior edition, and no follow-on product or business news appeared on 23 or 24 September. New Relic remains private under Francisco Partners and TPG since November 2023 and publishes no current ARR or customer-count figures. New Relic Lens and New Relic Ground Truth both reached general availability on 15 September. The Microsoft Azure Marketplace channel, cited 2 June as showing double-digit year-over-year growth in committed bookings, remains the route by which New Relic most often appears opposite Elastic in Azure-committed accounts. o11y Hacks London at Clays Soho is scheduled for 30 September and Money20/20 in Las Vegas runs 18–21 October.</p>
+      </div>
+
+      <div class="vendor-card no-update" data-vendor="splunk">
+        <div class="card-head">
+          <h3>Splunk / Cisco</h3>
+          <span class="status-badge quiet">Quiet</span>
+        </div>
+        <div class="card-rule"></div>
+        <p class="no-update-msg">No new Splunk-specific announcement landed in the 21–24 September window; .conf26 concluded in Denver on 17 September, several days before this window opens, and no observability-specific news has followed. Standing items: the Cisco AI POD for Splunk (on-premises, NVIDIA-accelerated AI infrastructure) and the expanded AWS partnership around Agentic SOC remain the conference's headline items, both now concluded announcements from 14–15 September. Splunk Agent Observability, including its Tokenomics token-spend-tracking capability, is generally available across cloud, on-premises and as a native Cisco Cloud Control application. Splunk Enterprise Security 8.7.0 shipped 2 September and ESCU 6.6.0 shipped 10 September, both before this window. There is no scheduled Splunk observability event before .conf27.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="section-label">Further reading</div>
+    <div class="further-reading">
+
+      <div class="fr-vendor" data-vendor="datadog">
+        <h3>Datadog</h3>
+        <ul>
+          <li><a class="fr-link" href="https://events.datadoghq.com/summits/datadog-summit-san-francisco/">Datadog Summit San Francisco 2026 — Datadog events</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="footer-note">Elastic — Internal competitive intelligence · Not for external distribution</p>
+    <p>Regenerated every weekday morning · <a href="mailto:frank.swain@elastic.co">frank.swain@elastic.co</a> · <a href="https://frankswain-png.github.io/o11y_compintel/archive/archive.html">View archive</a></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'compintel-hidden-vendors';
+  var pills = Array.prototype.slice.call(document.querySelectorAll('.filter-pill'));
+  var resetBtn = document.getElementById('resetFilters');
+  var counter = document.getElementById('filterCount');
+  var total = pills.length;
+
+  function loadHidden(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch(e) { return []; }
+  }
+  function saveHidden(arr){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch(e) {}
+  }
+
+  var hidden = loadHidden();
+
+  function isHidden(v){ return hidden.indexOf(v) !== -1; }
+
+  function render(){
+    pills.forEach(function(p){
+      var v = p.getAttribute('data-vendor');
+      if (isHidden(v)) { p.classList.remove('on'); } else { p.classList.add('on'); }
+    });
+    var nodes = document.querySelectorAll('.summary-row, .vendor-card, .fr-vendor');
+    Array.prototype.forEach.call(nodes, function(node){
+      var v = node.getAttribute('data-vendor');
+      if (isHidden(v)) { node.classList.add('hidden'); } else { node.classList.remove('hidden'); }
+    });
+    var shown = total - hidden.length;
+    counter.textContent = shown + ' of ' + total + ' vendors';
+  }
+
+  pills.forEach(function(p){
+    p.addEventListener('click', function(){
+      var v = p.getAttribute('data-vendor');
+      var idx = hidden.indexOf(v);
+      if (idx === -1) { hidden.push(v); } else { hidden.splice(idx, 1); }
+      saveHidden(hidden);
+      render();
+    });
+  });
+
+  resetBtn.addEventListener('click', function(){
+    hidden = [];
+    saveHidden(hidden);
+    render();
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
